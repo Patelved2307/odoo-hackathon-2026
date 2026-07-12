@@ -40,7 +40,12 @@ export default function SignUp() {
     if (!validate()) return;
     setLoading(true);
     setTimeout(() => {
-      login(email, role);
+      const result = login(email, password, role);
+      if (!result.ok) {
+        setErrors(prev => ({ ...prev, email: result.error }));
+        setLoading(false);
+        return;
+      }
       navigate({ to: "/dashboard" });
     }, 500);
   };

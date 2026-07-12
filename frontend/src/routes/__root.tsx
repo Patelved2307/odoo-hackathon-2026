@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportError } from "../lib/error-reporting";
 import { AuthProvider } from "@/context/AuthContext";
 import { SettingsProvider } from "@/context/SettingsContext";
+import { NotificationsProvider } from "@/context/NotificationsContext";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -98,8 +99,10 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <SettingsProvider>
-          <Outlet />
-          <Toaster position="top-right" />
+          <NotificationsProvider>
+            <Outlet />
+            <Toaster position="top-right" />
+          </NotificationsProvider>
         </SettingsProvider>
       </AuthProvider>
     </QueryClientProvider>

@@ -78,7 +78,11 @@ export default function Bookings() {
   return (
     <AppLayout>
       <PermissionGate perm="bookings">
-        <PageHeader title="Resource Bookings" description="Reserve shared assets like meeting rooms, vehicles and equipment."
+        <PageHeader
+          title="Resource Bookings"
+          description={view === "table"
+            ? "Reserve shared assets like meeting rooms, vehicles and equipment."
+            : "Pick a date to see everything booked that day, or select an empty day to start a new request."}
           actions={<Button onClick={() => setOpen(true)} className="gap-2 bg-[#2563EB] hover:bg-[#1d4fd8]"><Plus className="h-4 w-4" />New booking</Button>} />
 
         {view === "table" ? (

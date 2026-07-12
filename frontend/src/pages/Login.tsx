@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth, type Role } from "@/context/AuthContext";
+import { useAuth, type Role, ROLE_LIST } from "@/context/AuthContext";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { Sparkles, ShieldCheck, Zap } from "lucide-react";
 import { motion } from "framer-motion";
@@ -11,16 +11,28 @@ import logoIcon from "@/assets/logo-icon.png";
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("alex.morgan@assetflow.ai");
-  const [password, setPassword] = useState("demo1234");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [role, setRole] = useState<Role>("Admin");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
+    // Client-side gate before we even attempt to log in — an empty or
+    // obviously malformed email/password no longer reaches `login()`.
+    if (!email.trim()) { setError("Enter your work email."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setError("Enter a valid email address, e.g. name@company.com."); return; }
+    if (!password) { setError("Enter your password."); return; }
+    if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
+
     setLoading(true);
     setTimeout(() => {
-      login(email, role);
+      const result = login(email, password, role);
+      setLoading(false);
+      if (!result.ok) { setError(result.error); return; }
       navigate({ to: "/dashboard" });
     }, 500);
   };
@@ -77,18 +89,20 @@ export default function Login() {
           <div className="mt-6 space-y-4">
             <div className="space-y-1.5">
               <Label className="text-xs font-medium text-[#0F172A]">Work email</Label>
-              <Input value={email} onChange={e => setEmail(e.target.value)} type="email" required className="h-11" />
+              <Input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="name@company.com" required className="h-11" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-medium text-[#0F172A]">Password</Label>
-              <Input value={password} onChange={e => setPassword(e.target.value)} type="password" required className="h-11" />
+              <Input value={password} onChange={e => setPassword(e.target.value)} type="password" placeholder="At least 8 characters" required minLength={8} className="h-11" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-medium text-[#0F172A]">Sign in as (demo)</Label>
               <select value={role} onChange={e => setRole(e.target.value as Role)} className="h-11 w-full rounded-md border border-[#E2E8F0] bg-white px-3 text-sm">
-                {(["Admin","Asset Manager","Department Head","Employee","Auditor","Technician"] as Role[]).map(r => <option key={r}>{r}</option>)}
+                {ROLE_LIST.map(r => <option key={r}>{r}</option>)}
               </select>
+              <p className="text-[11px] text-[#94A3B8]">This is the role you'll be signed in with for this session — it can only be changed by signing out and back in.</p>
             </div>
+            {error && <p className="text-xs text-red-600" role="alert">{error}</p>}
             <Button type="submit" disabled={loading} className="w-full h-11 bg-[#2563EB] hover:bg-[#1d4fd8] text-white font-medium">
               {loading ? "Signing in…" : "Sign in"}
             </Button>

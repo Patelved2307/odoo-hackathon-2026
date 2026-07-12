@@ -1,13 +1,17 @@
-import { Bell, Search, Command as CmdIcon, LogOut, User as UserIcon, ChevronDown } from "lucide-react";
-import { useAuth, type Role } from "@/context/AuthContext";
+import { Bell, Search, Command as CmdIcon, LogOut, User as UserIcon, ChevronDown, CheckCheck } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { useNotifications } from "@/context/NotificationsContext";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { NOTIFICATIONS } from "@/data/mock";
+import { Info, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
-  DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent,
+  DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CommandPalette } from "./CommandPalette";
+
+const NOTE_ICONS = { info: Info, success: CheckCircle2, warning: AlertTriangle, error: XCircle };
+const NOTE_CLR = { info: "text-blue-500 bg-blue-50", success: "text-emerald-500 bg-emerald-50", warning: "text-amber-500 bg-amber-50", error: "text-red-500 bg-red-50" };
 
 const ROUTE_LABELS: Record<string, string> = {
   dashboard: "Dashboard", organization: "Organization", assets: "Assets", register: "Register",
@@ -18,11 +22,11 @@ const ROUTE_LABELS: Record<string, string> = {
 };
 
 export function Topbar() {
-  const { user, logout, switchRole } = useAuth();
+  const { user, logout } = useAuth();
+  const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: s => s.location.pathname });
   const [openCmd, setOpenCmd] = useState(false);
-  const unread = NOTIFICATIONS.filter(n => n.unread).length;
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -64,22 +68,55 @@ export function Topbar() {
             <DropdownMenuTrigger asChild>
               <button className="relative h-9 w-9 rounded-lg border border-[#E2E8F0] bg-white flex items-center justify-center text-[#64748B] hover:text-[#0F172A] hover:border-[#CBD5E1]">
                 <Bell className="h-4 w-4" />
-                {unread > 0 && <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#EF4444] ring-2 ring-white" />}
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full bg-[#EF4444] ring-2 ring-white text-[9px] font-semibold text-white flex items-center justify-center">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80 p-0">
               <div className="px-4 py-3 border-b border-[#E2E8F0] flex items-center justify-between">
-                <p className="text-sm font-semibold">Notifications</p>
-                <Link to="/notifications" className="text-xs text-[#2563EB] hover:underline">View all</Link>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold">Notifications</p>
+                  {unreadCount > 0 && <span className="text-[10px] font-medium text-[#2563EB] bg-blue-50 rounded-full px-1.5 py-0.5">{unreadCount} new</span>}
+                </div>
+                <div className="flex items-center gap-2">
+                  {unreadCount > 0 && (
+                    <button onClick={markAllRead} className="text-xs text-[#64748B] hover:text-[#0F172A] inline-flex items-center gap-1">
+                      <CheckCheck className="h-3 w-3" /> Mark all read
+                    </button>
+                  )}
+                  <Link to="/notifications" className="text-xs text-[#2563EB] hover:underline">View all</Link>
+                </div>
               </div>
               <div className="max-h-80 overflow-y-auto">
-                {NOTIFICATIONS.slice(0, 4).map(n => (
-                  <div key={n.id} className="px-4 py-3 border-b border-[#F1F5F9] last:border-0 hover:bg-[#F8FAFC]">
-                    <p className="text-[13px] font-medium text-[#0F172A]">{n.title}</p>
-                    <p className="text-[12px] text-[#64748B] mt-0.5">{n.body}</p>
-                    <p className="text-[11px] text-[#94A3B8] mt-1">{n.when}</p>
+                {notifications.slice(0, 4).map(n => {
+                  const Icon = NOTE_ICONS[n.type];
+                  return (
+                    <button
+                      key={n.id}
+                      onClick={() => { markRead(n.id); navigate({ to: "/notifications" }); }}
+                      className={`w-full text-left px-4 py-3 border-b border-[#F1F5F9] last:border-0 hover:bg-[#F8FAFC] flex items-start gap-2.5 ${n.unread ? "bg-blue-50/40" : ""}`}
+                    >
+                      <div className={`h-7 w-7 shrink-0 rounded-lg flex items-center justify-center ${NOTE_CLR[n.type]}`}><Icon className="h-3.5 w-3.5" /></div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-[13px] font-medium text-[#0F172A] truncate">{n.title}</p>
+                          {n.unread && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#2563EB]" />}
+                        </div>
+                        <p className="text-[12px] text-[#64748B] mt-0.5 line-clamp-2">{n.body}</p>
+                        <p className="text-[11px] text-[#94A3B8] mt-1">{n.when}</p>
+                      </div>
+                    </button>
+                  );
+                })}
+                {notifications.length === 0 && (
+                  <div className="px-4 py-8 text-center text-xs text-[#94A3B8]">
+                    <Bell className="h-5 w-5 mx-auto mb-2" />
+                    You're all caught up.
                   </div>
-                ))}
+                )}
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -106,14 +143,6 @@ export function Topbar() {
               <DropdownMenuItem onClick={() => navigate({ to: "/settings" })}>
                 Settings
               </DropdownMenuItem>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>Switch role</DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  {(["Admin","Asset Manager","Department Head","Employee","Auditor","Technician"] as Role[]).map(r => (
-                    <DropdownMenuItem key={r} onClick={() => switchRole(r)}>{r}</DropdownMenuItem>
-                  ))}
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => { logout(); navigate({ to: "/login" }); }} className="text-red-600 focus:text-red-600">
                 <LogOut className="h-4 w-4 mr-2" /> Sign out

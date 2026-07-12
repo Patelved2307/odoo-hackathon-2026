@@ -22,9 +22,36 @@ const RESPONSES: Record<string, string> = {
   priya: "**Priya Shah** (Asset Manager) currently has **6 assets**: Laptop AF-0114 (allocated Jun 14, due Aug 14), Monitor AF-0203, Desk AF-0156, Chair AF-0089, External SSD AF-0341, and Docking Station AF-0418. All items are in good condition with average health score of **87**.",
   booking: "Tomorrow at **2:00 PM**, I have availability data: Meeting Room A1 (Free), Meeting Room C4 (Free), Meeting Room B2 (Booked 1:30-3:30 PM). Recommendation: **A1 or C4** both available. A1 has better ventilation and AV setup.",
   health: "**Top 5 Assets by Health Score**: 1. Server Studio 2 (99), 2. Projector AF-0099 (96), 3. MacBook Pro M3 (95), 4. Monitor LG UltraWide (94), 5. Conference Phone System (92). All critical infrastructure is in excellent condition.",
+  unrecognized: "I couldn't match that to anything in your asset data, so I don't want to guess and hand you a made-up answer. Try asking about assets, allocations, bookings, maintenance, spend, warranties, or a specific person or department — or tap one of the suggestions below.",
 };
 
+// Domain terms the copilot can actually answer about. Anything outside this
+// list (typos, keyboard mash, off-topic text) should fall through to the
+// "unrecognized" reply instead of the polished — but fabricated — default.
+const KNOWN_TERMS = [
+  "idle", "unused", "maintenance", "preventive", "priya", "room", "rooms", "available", "availability",
+  "health", "spend", "cost", "budget", "warranty", "warranties", "audit", "book", "booking", "bookings",
+  "allocation", "allocations", "report", "reports", "department", "location", "technician", "laptop",
+  "monitor", "server", "servers", "utilization", "value", "depreciation", "transfer", "ticket", "tickets",
+  "asset", "assets", "device", "devices", "employee", "employees", "vehicle", "vehicles", "phone", "phones",
+];
+const QUESTION_STARTERS = ["which", "what", "who", "how", "show", "list", "total", "top", "find", "when", "where", "why", "does", "do", "is", "are"];
+
+function isRecognizedQuery(q: string) {
+  const s = q.toLowerCase().trim();
+  if (s.length < 4) return false;
+  const words = s.split(/\s+/);
+  // A real question is either multiple words that read like English, or
+  // contains at least one domain term / question starter we know how to answer.
+  const hasKnownTerm = KNOWN_TERMS.some(t => s.includes(t));
+  const startsLikeQuestion = QUESTION_STARTERS.includes(words[0]) || s.endsWith("?");
+  // Single-token gibberish (e.g. "dfgaerg") has no spaces and isn't a known term.
+  if (words.length === 1 && !hasKnownTerm) return false;
+  return hasKnownTerm || startsLikeQuestion;
+}
+
 function pickResponse(q: string) {
+  if (!isRecognizedQuery(q)) return RESPONSES.unrecognized;
   const s = q.toLowerCase();
   if (s.includes("idle") || s.includes("unused")) return RESPONSES.idle;
   if (s.includes("maintenance") || s.includes("preventive")) return RESPONSES.maintenance;
