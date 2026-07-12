@@ -1,0 +1,140 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-ai: var(--ai);
+  --color-ai-foreground: var(--ai-foreground);
+  --color-surface: var(--surface);
+  --color-status-available: #10B981;
+  --color-status-allocated: #3B82F6;
+  --color-status-reserved: #8B5CF6;
+  --color-status-maintenance: #F59E0B;
+  --color-status-lost: #EF4444;
+  --color-status-retired: #6B7280;
+  --color-status-disposed: #4B5563;
+  --shadow-card: 0 1px 3px rgba(0,0,0,.08);
+  --shadow-hover: 0 8px 25px rgba(0,0,0,.08);
+  --shadow-float: 0 12px 30px rgba(0,0,0,.08);
+  --shadow-modal: 0 20px 40px rgba(0,0,0,.12);
+}
+
+:root {
+  --radius: 12px;
+  --background: oklch(0.984 0.005 240);
+  --foreground: oklch(0.21 0.04 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.04 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.04 260);
+  --primary: oklch(0.55 0.22 260);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.01 250);
+  --secondary-foreground: oklch(0.21 0.04 260);
+  --muted: oklch(0.96 0.01 250);
+  --muted-foreground: oklch(0.55 0.03 250);
+  --accent: oklch(0.96 0.01 250);
+  --accent-foreground: oklch(0.21 0.04 260);
+  --destructive: oklch(0.62 0.24 27);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.92 0.01 250);
+  --input: oklch(0.92 0.01 250);
+  --ring: oklch(0.55 0.22 260);
+  --sidebar: oklch(0.984 0.005 240);
+  --sidebar-foreground: oklch(0.21 0.04 260);
+  --sidebar-primary: oklch(0.55 0.22 260);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.96 0.01 250);
+  --sidebar-accent-foreground: oklch(0.21 0.04 260);
+  --sidebar-border: oklch(0.92 0.01 250);
+  --sidebar-ring: oklch(0.55 0.22 260);
+  --ai: oklch(0.53 0.24 295);
+  --ai-foreground: oklch(1 0 0);
+
+  /* Landing page tokens (used by src/pages/Home, Features, Roles, AICopilotOverview, Contact) */
+  --violet: oklch(0.60 0.24 300);
+  --teal: oklch(0.78 0.125 172);
+  --surface: oklch(0.968 0.008 262);
+  --gradient-brand: linear-gradient(135deg, oklch(0.585 0.195 268), oklch(0.6 0.215 296));
+  --gradient-soft: linear-gradient(160deg, oklch(0.98 0.01 260) 0%, oklch(0.95 0.03 285) 100%);
+  --shadow-glow: 0 20px 60px -20px oklch(0.55 0.22 275 / 0.35);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html, body { font-family: var(--font-sans); }
+  body {
+    background-color: #F8FAFC;
+    color: #0F172A;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+}
+
+@utility card-surface {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+
+/* Landing page utilities (used by src/pages/Home, Features, Roles, AICopilotOverview, Contact) */
+@utility gradient-text {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility gradient-bg {
+  background: var(--gradient-brand);
+}
+
+@utility soft-bg {
+  background: var(--gradient-soft);
+}
+
+@utility card-shadow {
+  box-shadow: var(--shadow-card);
+}
+
+@utility glow-shadow {
+  box-shadow: var(--shadow-glow);
+}
