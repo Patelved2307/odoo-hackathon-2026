@@ -6,8 +6,6 @@
 
 </div>
 
----
-
 ## 📖 About
 
 AssetFlow AI helps organizations track physical and digital assets end-to-end — from registration and booking to maintenance and audit — with AI-assisted insights via a built-in Copilot.
