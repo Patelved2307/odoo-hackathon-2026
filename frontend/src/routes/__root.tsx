@@ -107,3 +107,4 @@ function RootComponent() {
       </AuthProvider>
     </QueryClientProvider>
   );
+}
