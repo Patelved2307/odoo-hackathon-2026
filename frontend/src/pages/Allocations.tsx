@@ -24,6 +24,8 @@ export default function Allocations() {
   const [open, setOpen] = useState(false);
   const [assetId, setAssetId] = useState(AVAILABLE_ASSETS[0]?.id ?? "");
   const [to, setTo] = useState(NAME_LIST[0]);
+  const [dueDate, setDueDate] = useState("");
+  const [notes, setNotes] = useState("");
 
   const cols: ColumnDef<Allocation>[] = [
     { header: "ID", accessorKey: "id", cell: ({ row }) => <span className="font-mono text-xs text-[#64748B]">{row.original.id}</span> },
@@ -31,6 +33,7 @@ export default function Allocations() {
     { header: "From", accessorKey: "from", cell: ({ row }) => row.original.from ?? <span className="text-[#94A3B8]">Pool</span> },
     { header: "To", accessorKey: "to" },
     { header: "Date", accessorKey: "date" },
+    { header: "Due back", accessorKey: "dueDate", cell: ({ row }) => row.original.dueDate ?? <span className="text-[#94A3B8]">—</span> },
     { header: "Approver", accessorKey: "approver" },
     { header: "Status", accessorKey: "status", cell: ({ row }) => <StatusBadge status={row.original.status} /> },
   ];
@@ -49,11 +52,15 @@ export default function Allocations() {
       asset: asset.name,
       to,
       date: new Date().toISOString().slice(0, 10),
+      dueDate: dueDate || undefined,
       status: "Active",
       approver: user?.name ?? "Pending approval",
+      notes: notes || undefined,
     };
     setRows(r => [rec, ...r]);
     setOpen(false);
+    setDueDate("");
+    setNotes("");
     toast.success("Allocation created", { description: `${asset.name} → ${to}` });
   };
 
@@ -85,7 +92,11 @@ export default function Allocations() {
                   {NAME_LIST.map(n => <option key={n}>{n}</option>)}
                 </select>
               </div>
-              <Input placeholder="Notes (optional)" />
+              <div className="space-y-1.5">
+                <Label className="text-xs">Expected return date (optional)</Label>
+                <Input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} />
+              </div>
+              <Input placeholder="Notes (optional)" value={notes} onChange={e => setNotes(e.target.value)} />
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>

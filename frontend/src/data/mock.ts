@@ -93,8 +93,10 @@ export interface Allocation {
   from?: string;
   to: string;
   date: string;
+  dueDate?: string;
   status: "Active" | "Transferred" | "Returned";
   approver: string;
+  notes?: string;
 }
 export const ALLOCATIONS: Allocation[] = Array.from({ length: 20 }).map((_, i) => ({
   id: `AL${500 + i}`,

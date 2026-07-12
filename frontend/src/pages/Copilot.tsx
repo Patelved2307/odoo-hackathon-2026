@@ -51,17 +51,23 @@ export default function Copilot() {
     setInput("");
     setTyping(true);
     const full = pickResponse(q);
-    let i = 0;
-    setMsgs(m => [...m, { role: "ai", content: "", streaming: true }]);
-    const iv = setInterval(() => {
-      i += 3;
-      setMsgs(m => {
-        const copy = [...m];
-        copy[copy.length - 1] = { role: "ai", content: full.slice(0, i), streaming: i < full.length };
-        return copy;
-      });
-      if (i >= full.length) { clearInterval(iv); setTyping(false); }
-    }, 20);
+
+    // Real replies don't start appearing the instant you hit send — give a
+    // short "thinking" beat (during which the bouncing dots show) before the
+    // text starts streaming in, and reveal it more gradually than before.
+    setTimeout(() => {
+      let i = 0;
+      setMsgs(m => [...m, { role: "ai", content: "", streaming: true }]);
+      const iv = setInterval(() => {
+        i += 2;
+        setMsgs(m => {
+          const copy = [...m];
+          copy[copy.length - 1] = { role: "ai", content: full.slice(0, i), streaming: i < full.length };
+          return copy;
+        });
+        if (i >= full.length) { clearInterval(iv); setTyping(false); }
+      }, 32);
+    }, 700);
   };
 
   return (

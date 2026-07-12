@@ -6,6 +6,7 @@ import { KPICard } from "@/components/common/KPICard";
 import { downloadCsv } from "@/lib/utils";
 import { toast } from "sonner";
 import { ASSETS } from "@/data/mock";
+import { useSettings } from "@/context/SettingsContext";
 
 const util = Array.from({ length: 12 }).map((_, i) => ({ m: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][i], used: 60 + i * 2, idle: 30 - i }));
 const spend = Array.from({ length: 6 }).map((_, i) => ({ q: `Q${i+1}`, capex: 40 + i * 5, opex: 20 + i * 3 }));
@@ -27,6 +28,7 @@ function generateReport(name: string) {
 }
 
 export default function Reports() {
+  const { currencySymbol } = useSettings();
   return (
     <AppLayout>
       <PermissionGate perm="reports">
@@ -35,8 +37,8 @@ export default function Reports() {
 
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
           <KPICard label="Utilization rate" value={78} suffix="%" icon={TrendingUp} accent="success" delta={5.2} />
-          <KPICard label="Total spend YTD" value={342000} prefix="$" icon={DollarSign} accent="primary" delta={-3.1} />
-          <KPICard label="Cost per employee" value={2140} prefix="$" icon={Users} accent="warning" delta={-2.4} />
+          <KPICard label="Total spend YTD" value={342000} prefix={currencySymbol} icon={DollarSign} accent="primary" delta={-3.1} />
+          <KPICard label="Cost per employee" value={2140} prefix={currencySymbol} icon={Users} accent="warning" delta={-2.4} />
           <KPICard label="Avg lifecycle (mo)" value={38} icon={TrendingUp} accent="ai" delta={4.1} />
         </div>
 

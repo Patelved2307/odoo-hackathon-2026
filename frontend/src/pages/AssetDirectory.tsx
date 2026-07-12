@@ -10,11 +10,13 @@ import { useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { downloadCsv } from "@/lib/utils";
 import { toast } from "sonner";
+import { useSettings } from "@/context/SettingsContext";
 
 const STATUS_LIST: (AssetStatus | "All")[] = ["All", "Available", "Allocated", "Reserved", "Maintenance", "Lost", "Retired"];
 
 export default function AssetDirectory() {
   const navigate = useNavigate();
+  const { currencySymbol } = useSettings();
   const [assets, setAssets] = useState<Asset[]>(INITIAL_ASSETS);
   const [cat, setCat] = useState<string>("All");
   const [status, setStatus] = useState<AssetStatus | "All">("All");
@@ -39,7 +41,7 @@ export default function AssetDirectory() {
     { header: "Assignee", accessorKey: "assignee", cell: ({ row }) => row.original.assignee ?? <span className="text-[#94A3B8]">—</span> },
     { header: "Department", accessorKey: "department" },
     { header: "Location", accessorKey: "location" },
-    { header: "Value", accessorKey: "value", cell: ({ row }) => <span className="tabular-nums">${row.original.value.toLocaleString()}</span> },
+    { header: "Value", accessorKey: "value", cell: ({ row }) => <span className="tabular-nums">{currencySymbol}{row.original.value.toLocaleString()}</span> },
     { id: "actions", header: "", cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>

@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CATEGORY_LIST, DEPT_LIST, LOCATION_LIST } from "@/data/mock";
+import { ASSETS, CATEGORY_LIST, DEPT_LIST, LOCATION_LIST, type Asset } from "@/data/mock";
 import { toast } from "sonner";
 import { Check, Package, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
@@ -37,6 +37,28 @@ export default function AssetRegister() {
 
   const onSubmit = async (v: FormValues) => {
     await new Promise(r => setTimeout(r, 700));
+
+    // Build the full Asset record and push it into the shared ASSETS list so
+    // it actually shows up in the Asset Directory below, instead of just
+    // showing a toast and disappearing.
+    const newAsset: Asset = {
+      id: `A${1000 + ASSETS.length}`,
+      tag: `AF-${(1000 + ASSETS.length).toString()}`,
+      name: v.name,
+      category: v.category,
+      serial: v.serial,
+      status: "Available",
+      location: v.location,
+      department: v.department,
+      assignee: undefined,
+      value: v.value,
+      purchaseDate: v.purchaseDate,
+      warrantyUntil: v.warrantyUntil,
+      condition: "Excellent",
+      vendor: v.vendor,
+    };
+    ASSETS.unshift(newAsset);
+
     setSubmitted(true);
     toast.success("Asset registered", { description: `${v.name} added to the directory.` });
     setTimeout(() => navigate({ to: "/assets" }), 900);
@@ -54,8 +76,8 @@ export default function AssetRegister() {
                 <select {...register("category")} className="h-10 w-full rounded-md border border-[#E2E8F0] bg-white px-3 text-sm">{CATEGORY_LIST.map(c => <option key={c}>{c}</option>)}</select>
               </Field>
               <Field label="Serial number" error={errors.serial?.message}><Input {...register("serial")} placeholder="SN-XXXXXXX" /></Field>
-              <Field label="Vendor" error={errors.vendor?.message}><Input {...register("vendor")} /></Field>
-              <Field label="Purchase value (USD)" error={errors.value?.message}><Input type="number" {...register("value")} /></Field>
+              <Field label="Vendor" error={errors.vendor?.message}><Input {...register("vendor")} placeholder="e.g. Apple, Dell" /></Field>
+              <Field label="Purchase value (USD)" error={errors.value?.message}><Input type="number" {...register("value")} placeholder="Enter purchase value" /></Field>
               <Field label="Department" error={errors.department?.message}>
                 <select {...register("department")} className="h-10 w-full rounded-md border border-[#E2E8F0] bg-white px-3 text-sm">{DEPT_LIST.map(c => <option key={c}>{c}</option>)}</select>
               </Field>

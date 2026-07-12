@@ -9,10 +9,12 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useSettings } from "@/context/SettingsContext";
 
 export default function AssetPassport() {
   const { id } = useParams({ strict: false }) as { id: string };
   const navigate = useNavigate();
+  const { currencySymbol } = useSettings();
   const asset = ASSETS.find(a => a.id === id);
   const [qrOpen, setQrOpen] = useState(false);
   const [reassignOpen, setReassignOpen] = useState(false);
@@ -82,7 +84,7 @@ export default function AssetPassport() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-[#E2E8F0]">
               <Meta icon={User} label="Assignee" value={asset.assignee ?? "Unassigned"} />
               <Meta icon={MapPin} label="Location" value={asset.location} />
-              <Meta icon={DollarSign} label="Value" value={`$${asset.value.toLocaleString()}`} />
+              <Meta icon={DollarSign} label="Value" value={`${currencySymbol}${asset.value.toLocaleString()}`} />
               <Meta icon={Shield} label="Condition" value={asset.condition} />
               <Meta icon={Calendar} label="Purchased" value={asset.purchaseDate} />
               <Meta icon={Shield} label="Warranty" value={asset.warrantyUntil} />

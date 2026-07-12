@@ -39,6 +39,7 @@ interface AuthCtx {
   logout: () => void;
   can: (perm: string) => boolean;
   switchRole: (role: Role) => void;
+  updateProfile: (patch: Partial<Pick<User, "name" | "email" | "department">>) => void;
 }
 
 const Ctx = createContext<AuthCtx | null>(null);
@@ -73,9 +74,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     if (typeof window !== "undefined") localStorage.removeItem("assetflow_user");
   };
+  const updateProfile = (patch: Partial<Pick<User, "name" | "email" | "department">>) => {
+    if (!user) return;
+    const u = { ...user, ...patch };
+    setUser(u);
+    if (typeof window !== "undefined") localStorage.setItem("assetflow_user", JSON.stringify(u));
+  };
   const can = (perm: string) => !!user && (PERMISSIONS[perm]?.includes(user.role) ?? false);
 
-  return <Ctx.Provider value={{ user, login, logout, can, switchRole }}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={{ user, login, logout, can, switchRole, updateProfile }}>{children}</Ctx.Provider>;
 }
 
 export function useAuth() {

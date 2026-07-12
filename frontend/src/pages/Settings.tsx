@@ -6,11 +6,22 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useSettings, type CurrencyCode } from "@/context/SettingsContext";
 
 const INTEGRATIONS = [["Slack","Notifications & alerts"],["Jira","Ticket sync"],["Workday","HR & user provisioning"],["Okta","SSO & SCIM"],["QuickBooks","Depreciation export"],["Zapier","No-code automations"]];
 
 export default function Settings() {
   const [connected, setConnected] = useState<Record<string, boolean>>({});
+  const { settings, updateSettings } = useSettings();
+
+  // Local draft state so "Save" is a deliberate action — typing doesn't
+  // apply app-wide until confirmed, but once saved it's read from
+  // SettingsContext by every other page (Dashboard, Reports, Asset
+  // Directory, Asset Passport, Register Asset all show this currency).
+  const [workspaceName, setWorkspaceName] = useState(settings.workspaceName);
+  const [currency, setCurrency] = useState<CurrencyCode>(settings.currency);
+  const [fiscalYearStart, setFiscalYearStart] = useState(settings.fiscalYearStart);
+
   const toggleConnect = (name: string) => {
     setConnected(c => {
       const next = !c[name];
@@ -18,6 +29,12 @@ export default function Settings() {
       return { ...c, [name]: next };
     });
   };
+
+  const saveGeneral = () => {
+    updateSettings({ workspaceName, currency, fiscalYearStart });
+    toast.success("Settings saved", { description: "Your changes now apply across the whole workspace." });
+  };
+
   return (
     <AppLayout>
       <PermissionGate perm="settings">
@@ -32,14 +49,18 @@ export default function Settings() {
           </TabsList>
           <TabsContent value="general" className="mt-4">
             <div className="card-surface p-6 space-y-4 max-w-2xl">
-              <Row label="Workspace name"><Input defaultValue="Acme Corporation" /></Row>
+              <Row label="Workspace name"><Input value={workspaceName} onChange={e => setWorkspaceName(e.target.value)} /></Row>
               <Row label="Default currency">
-                <select className="h-10 w-full rounded-md border border-[#E2E8F0] bg-white px-3 text-sm"><option>USD</option><option>EUR</option><option>GBP</option><option>INR</option></select>
+                <select value={currency} onChange={e => setCurrency(e.target.value as CurrencyCode)} className="h-10 w-full rounded-md border border-[#E2E8F0] bg-white px-3 text-sm">
+                  <option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="INR">INR</option>
+                </select>
               </Row>
               <Row label="Fiscal year start">
-                <select className="h-10 w-full rounded-md border border-[#E2E8F0] bg-white px-3 text-sm"><option>January</option><option>April</option><option>July</option><option>October</option></select>
+                <select value={fiscalYearStart} onChange={e => setFiscalYearStart(e.target.value)} className="h-10 w-full rounded-md border border-[#E2E8F0] bg-white px-3 text-sm">
+                  <option>January</option><option>April</option><option>July</option><option>October</option>
+                </select>
               </Row>
-              <div className="flex justify-end pt-3 border-t border-[#E2E8F0]"><Button onClick={() => toast.success("Settings saved")} className="bg-[#2563EB] hover:bg-[#1d4fd8]">Save</Button></div>
+              <div className="flex justify-end pt-3 border-t border-[#E2E8F0]"><Button onClick={saveGeneral} className="bg-[#2563EB] hover:bg-[#1d4fd8]">Save</Button></div>
             </div>
           </TabsContent>
           <TabsContent value="security" className="mt-4">

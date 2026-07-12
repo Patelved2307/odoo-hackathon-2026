@@ -4,6 +4,7 @@ import { StatusBadge } from "@/components/common/StatusBadge";
 import { Package, CheckCircle2, Wrench, DollarSign, TrendingUp, Sparkles, Plus, Download } from "lucide-react";
 import { KPI, ACTIVITY, ASSETS, NOTIFICATIONS, BOOKINGS } from "@/data/mock";
 import { useAuth } from "@/context/AuthContext";
+import { useSettings } from "@/context/SettingsContext";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, BarChart, Bar, CartesianGrid } from "recharts";
@@ -13,9 +14,27 @@ const trend = Array.from({ length: 12 }).map((_, i) => ({ m: ["Jan","Feb","Mar",
 const catDist = ["Laptop","Monitor","Phone","Vehicle","Furniture","Server"].map((n, i) => ({ name: n, value: 12 + i * 4 }));
 const COLORS = ["#2563EB", "#7C3AED", "#10B981", "#F59E0B", "#EF4444", "#64748B"];
 
+// Builds a CSV snapshot of the current asset portfolio and downloads it —
+// the button previously had no click handler at all.
+function exportDashboardCsv() {
+  const header = ["ID", "Tag", "Name", "Category", "Status", "Department", "Location", "Value"];
+  const lines = ASSETS.map(a => [a.id, a.tag, a.name, a.category, a.status, a.department, a.location, a.value].join(","));
+  const csv = [header.join(","), ...lines].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `asset-portfolio-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { currencySymbol } = useSettings();
   return (
     <AppLayout>
       <PageHeader
@@ -23,7 +42,7 @@ export default function Dashboard() {
         description="Here's what's happening across your asset portfolio today."
         actions={
           <>
-            <Button variant="outline" className="gap-2"><Download className="h-4 w-4" />Export</Button>
+            <Button variant="outline" className="gap-2" onClick={exportDashboardCsv}><Download className="h-4 w-4" />Export</Button>
             <Button onClick={() => navigate({ to: "/assets/register" })} className="gap-2 bg-[#2563EB] hover:bg-[#1d4fd8]"><Plus className="h-4 w-4" />New asset</Button>
           </>
         }
@@ -33,7 +52,7 @@ export default function Dashboard() {
         <KPICard label="Total assets" value={KPI.totalAssets} icon={Package} delta={4.2} accent="primary" />
         <KPICard label="Available now" value={KPI.available} icon={CheckCircle2} delta={2.1} accent="success" />
         <KPICard label="In maintenance" value={KPI.maintenance} icon={Wrench} delta={-1.3} accent="warning" />
-        <KPICard label="Portfolio value" value={KPI.totalValue} prefix="$" icon={DollarSign} delta={6.8} accent="ai" />
+        <KPICard label="Portfolio value" value={KPI.totalValue} prefix={currencySymbol} icon={DollarSign} delta={6.8} accent="ai" />
       </div>
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
