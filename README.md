@@ -1,119 +1,73 @@
-# 🗂️ AssetFlow AI
-**An AI-powered asset management platform** — track, allocate, book, and maintain organizational assets from one intelligent dashboard.
+🗂️ AssetFlow AI
+An AI-powered asset management platform — track, allocate, book, and maintain organizational assets from one intelligent dashboard.
 
-## 📖 About
-AssetFlow AI helps organizations track physical and digital assets end-to-end — from registration and booking to maintenance and audit — with AI-assisted insights via a built-in Copilot.
----
+📖 About
+AssetFlow AI is a modern, full-stack asset management solution designed to help organizations efficiently manage physical and digital assets. From registration and booking to maintenance scheduling and auditing — everything is handled in one intelligent, AI-assisted platform.
+Built with performance and developer experience in mind, AssetFlow AI features a beautiful React frontend and a scalable Node.js + MongoDB backend.
 
-## ✨ Features
+✨ Key Features
+📊 Real-time Dashboard — Overview of assets, utilization, and key metrics
+🗃️ Asset Directory — Complete asset register with rich "asset passports"
+📅 Bookings & Allocations — Smart reservation and team assignment system
+🔧 Maintenance Management — Schedule, track, and log maintenance activities
+🤖 AI Copilot — Natural language assistant for queries and insights
+📈 Analytics & Reports — Visual insights on usage and optimization
+🕵️ Audit Trail — Complete activity history for transparency and compliance
+🔔 Smart Notifications — Reminders for due dates, approvals, and updates
+🏢 Organization Management — Teams, roles, permissions, and settings
+🔐 Authentication — Secure login and signup flows
+🔍 Global Search — Instant search across assets, bookings, and records
 
-- 📊 **Dashboard** — real-time overview of assets, activity, and key metrics
-- 🗃️ **Asset Directory & Register** — add, browse, and manage assets with digital "asset passports"
-- 📅 **Bookings & Allocations** — reserve and assign assets across teams
-- 🔧 **Maintenance Tracking** — schedule and log upkeep so nothing falls through the cracks
-- 🤖 **AI Copilot** — natural-language assistant for asset queries and insights
-- 📈 **Reports & Insights** — visual analytics on usage and utilization
-- 🕵️ **Audit Log** — full activity history for accountability
-- 🔔 **Notifications** — stay on top of due dates and approvals
-- 🏢 **Organization Management** — manage teams, roles, and settings
-- 🔐 **Auth** — login / sign-up flows
-- 🔍 **Global Search** — find assets, bookings, and records instantly
+🚀 Quick Start
 
----
+Prerequisites
+Node.js v18+ or Bun
 
-## 🛠️ Tech Stack
+1. Clone the repository
+  git clone <repository-url>
+  cd Website/frontend
 
-| Layer      | Technology                                                  |
-|------------|---------------------------------------------------------------|
-| Frontend   | React 19, TanStack Start, TanStack Router, TanStack Query     |
-| Styling    | Tailwind CSS 4, Radix UI, shadcn-style components              |
-| Forms      | React Hook Form + Zod validation                                |
-| Charts     | Recharts                                                       |
-| Build Tool | Vite 8                                                          |
-| Backend    | Node.js + Express *(in progress)*                               |
-| Database   | MongoDB Atlas + Mongoose *(in progress)*                        |
+3. Install dependencies
+   npm install
 
----
+4. Start the development server
+  npm run dev
+The app will be available at http://localhost:3000.
+Note: The frontend works standalone with mock data. Backend integration is in progress.
 
-## 🚀 Quick Start
+Other Useful Commands
+  hnpm run build     # Production build
+  npm run preview   # Preview production build
+  npm run lint      # Run ESLint
+  npm run format    # Run Prettier
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) v18+
-- npm (bundled with Node) — or [Bun](https://bun.sh/), since `bun.lock` is included
-
-```bash
-node -v   # confirm v18 or higher
-```
-
-### 1. Clone & enter the project
-```bash
-git clone <repository-url>
-cd Website/frontend
-```
-
-### 2. Install dependencies
-```bash
-npm install
-```
-
-### 3. Run the dev server
-```bash
-npm run dev
-```
-
-Vite will print the local URL in your terminal (typically `http://localhost:3000`) — open it in your browser.
-
-> ✅ No environment variables or database setup needed to run the frontend — it works standalone.
-
-### Other useful commands
-```bash
-npm run build      # production build
-npm run preview    # preview the production build
-npm run lint        # run ESLint
-npm run format      # run Prettier
-```
-
----
-
-## 📁 Project Structure
-
-```
-Website/
+📁 Project Structure
+textWebsite/
 ├── frontend/
 │   ├── src/
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/         # Page-level views (Dashboard, Bookings, Copilot, etc.)
-│   │   ├── routes/        # TanStack Router route definitions
-│   │   ├── hooks/         # Custom React hooks
-│   │   ├── context/       # React context providers
-│   │   ├── lib/           # Utility functions
-│   │   └── data/          # Static/mock data
+│   │   ├── components/     # Reusable UI components
+│   │   ├── pages/          # Page-level views
+│   │   ├── routes/         # TanStack Router configuration
+│   │   ├── hooks/          # Custom React hooks
+│   │   ├── context/        # Context providers
+│   │   ├── lib/            # Utilities & helpers
+│   │   └── data/           # Mock data
 │   └── public/             # Static assets
-└── backend/                 # API + MongoDB layer (in progress)
-```
+│
+├── backend/                # Node.js + Express API (in progress)
+└── README.md
 
----
+🤝 Contributing
+Contributions, issues, and feature requests are welcome!
 
-## 🗺️ Roadmap
+Fork the project
+Create your feature branch (git checkout -b feature/amazing-feature)
+Commit your changes (git commit -m 'Add some amazing feature')
+Push to the branch (git push origin feature/amazing-feature)
+Open a Pull Request
 
-- [x] Frontend UI — dashboard, assets, bookings, maintenance, insights, AI Copilot
-- [ ] Backend API (Express + TypeScript)
-- [ ] MongoDB Atlas integration
-- [ ] Authentication (JWT)
-- [ ] Connect frontend to live data
 
----
+📄 License
+Distributed under the MIT License. See LICENSE for more information.
 
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome — feel free to open a PR or issue.
-
-## 📄 License
-
-MIT — see `LICENSE` for details.
-
-<div align="center">
-
-Built with ❤️ for [Hackathon Name]
-
-</div>
+Built with ❤️ for the Hackathon
