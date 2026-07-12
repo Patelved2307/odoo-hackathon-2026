@@ -1,7 +1,5 @@
-<div align="center">
 # 🗂️ AssetFlow AI
 **An AI-powered asset management platform** — track, allocate, book, and maintain organizational assets from one intelligent dashboard.
-</div>
 
 ## 📖 About
 AssetFlow AI helps organizations track physical and digital assets end-to-end — from registration and booking to maintenance and audit — with AI-assisted insights via a built-in Copilot.
